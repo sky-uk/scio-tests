@@ -49,6 +49,5 @@ object RandomToAvro {
 
     sc.close().waitUntilFinish()
   }
-
 }
 
