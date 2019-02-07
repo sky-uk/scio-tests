@@ -1,0 +1,97 @@
+# Created by https://www.gitignore.io/api/scala
+
+### Scala ###
+*.class
+*.log
+
+# sbt specific
+.cache
+.history
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# Scala-IDE specific
+.scala_dependencies
+.worksheet
+
+# ENSIME specific
+.ensime_cache/
+.ensime
+
+.idea
+
+tmp/
+*.parquet
+\.DS_Store
+
+
+# PROJECT DATA
+*.add
+*.crc
+
+# VSCODE
+.vscode/
+
+# INTELLIJ
+*.iml
+*.idea
+
+*.out
+
+# Javascript stuffs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lib-cov
+coverage
+.nyc_output
+.grunt
+bower_components
+.lock-wscript
+node_modules/
+jspm_packages/
+.npm
+.eslintcache
+.node_repl_history
+package-lock.json
+.yarn-integrity
+
+# python stuff
+__pycache__/
+.eggs/
+*.egg-info/
+_dev_support/
+*build/
+*dist/
+.coverage
+
+# eclipse stuff
+.project
+.pydevproject
+.settings/
+
+# poc sftp-poller-integration resources
+pocs/sftp-poller-integration/downloaded/
+pocs/sftp-poller-integration/connector/filelist/
+
+# docker-compose volumes
+docker-compose/volumes/sftpdata/*.csv
+docker-compose/volumes/gcs1/*.csv
+docker-compose/volumes/gcs2/*
+!docker-compose/volumes/gcs2/.gitkeep
+docker-compose/volumes/users-gcloud/*.json
+docker-compose/volumes/users-gcloud/*.sh
+
+.dbeaver-data-sources.xml
+
+.bigquery
+/.mypy_cache/
+/mypy.ini
+
+.classpath
+

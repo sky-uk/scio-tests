@@ -22,3 +22,5 @@ release
 releaseVersionBump := sbtrelease.Version.Bump.Major
 releaseVersionBump = sbtrelease.Version.Bump.Major
 sbtrelease.Version.Bump.Major
+clean
+compile

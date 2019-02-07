@@ -4,10 +4,10 @@
 	<info
 		organisation="com.paro"
 		module="scio-tests_2.12"
-		revision="0.1.0-SNAPSHOT"
+		revision="0.1.0"
 		conf="pom"
 		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, pom, scala-tool"
-		date="20190207142520"/>
+		date="20190207143019"/>
 	<dependencies>
 	</dependencies>
 </ivy-report>
