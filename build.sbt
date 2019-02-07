@@ -10,8 +10,6 @@ publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.
 lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
   organization := "com.paro",
   // Semantic versioning http://semver.org/
-  version := "0.1.0-SNAPSHOT",
-  scalaVersion := "2.12.8",
   scalacOptions ++= Seq("-target:jvm-1.8",
     "-deprecation",
     "-feature",
