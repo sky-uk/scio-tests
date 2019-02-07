@@ -1,0 +1,24 @@
+run --project=sky-italia-bigdata --runner=DirectRunner --gcpTempLocation=gs://sky-ita-data-analytics-dev/dataflow/temp --stagingLocation=gs://sky-ita-data-analytics-dev/dataflow/staging --tempLocation=gs://sky-ita-data-analytics-dev/dataflow/temp --region=europe-west1
+releaseVersionBump
+release
+reload
+release
+reload
+release
+reload
+release
+reload
+release
+reload
+release
+release with-defaults
+reload
+release with-defaults
+reload
+release with-defaults
+reload
+release with-defaults
+release
+releaseVersionBump := sbtrelease.Version.Bump.Major
+releaseVersionBump = sbtrelease.Version.Bump.Major
+sbtrelease.Version.Bump.Major
