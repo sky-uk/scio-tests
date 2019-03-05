@@ -136,7 +136,10 @@ steps:
     sbt test
     fi
   dir: '${_GITHUB_REPO}'
-
+  volumes:
+  - name: 'ssh'
+    path: /root/.ssh
+    
 #- id: Execute Clean and Unit Tests
 #  name: 'gcr.io/$PROJECT_ID/scala-sbt'
 #  entrypoint: /bin/bash
