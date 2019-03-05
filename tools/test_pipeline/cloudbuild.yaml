@@ -1,0 +1,140 @@
+substitutions:
+    _CLOUDSDK_COMPUTE_ZONE: europe-west1-b                                  # comment for poc env / uncomment for devtest env
+    _CLOUDSDK_CONTAINER_CLUSTER: sky-dap-bb-ingestion                       # comment for poc env / uncomment for devtest env
+    _BUCKET_NAME: skyita-da-daita-devops/ServiceAccount/db_connector        # comment for poc env / uncomment for devtest env
+    _KEYRING: skyita-da-daita-keyring                                       # comment for poc env / uncomment for devtest env
+    _KEY: skyita-da-daita-key                                               # comment for poc env / uncomment for devtest env
+    #_CLOUDSDK_COMPUTE_ZONE: europe-west1-b                   # comment for devtest env / uncomment for poc env
+    #_CLOUDSDK_CONTAINER_CLUSTER: sky-dapbb-dev               # comment for devtest env / uncomment for poc env
+    #_BUCKET_NAME: test-kms                                   # comment for devtest env / uncomment for poc env
+    #_KEYRING: sky-dap-bb-key-ring                            # comment for devtest env / uncomment for poc env
+    #_KEY: sky-dap-bb-key                                     # comment for devtest env / uncomment for poc env
+    _APP_NAME: oracle_connector
+    _CONTAINER_IMAGE: skytv-connectors-db
+    _CONTAINER_IMAGE_VERSION: latest
+    _ENC_FILE: oracle-connector.json
+    _NEXUS_IP: 35.242.211.70
+    _GITHUB_REPO: ita-data-analytics #This line is required while Jenkins is not configured
+
+timeout: 1800s
+
+steps:
+
+- id: Fetch KMS secret that hosts service account's credentials from Cloud Storage
+  name: gcr.io/cloud-builders/gsutil
+  args: ['cp', 'gs://${_BUCKET_NAME}/${_ENC_FILE}.enc', '.']
+
+- id: Check that KMS secret has been copied correctly
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: /bin/bash
+  args:
+  - '-c'
+  - |
+    ls -l
+
+- id: Decrypt KMS secret that hosts service account's credentials
+  name: gcr.io/cloud-builders/gcloud
+  args:
+  - kms
+  - decrypt
+  - --ciphertext-file=${_ENC_FILE}.enc
+  - --plaintext-file=${_ENC_FILE}
+  - --location=global
+  - --keyring=${_KEYRING}
+  - --key=${_KEY}
+
+- id: Clone from Source Repository
+  name: 'gcr.io/cloud-builders/git'
+  args:
+  - clone
+  - https://source.developers.google.com/p/$PROJECT_ID/r/github_sky-uk_${_GITHUB_REPO}
+  - '${_GITHUB_REPO}'
+
+- id: Git checkout to actual branch
+  name: 'gcr.io/cloud-builders/git'
+  args:
+  - checkout
+  - ${_BRANCH_NAME} #While Jenkins is not configure, this variable must be passwd by "gcloud builds...." command using --substitutions _BRANCH_NAME=<your_branch>
+  dir: '${_GITHUB_REPO}'
+
+- id: Status
+  name: 'gcr.io/cloud-builders/git'
+  args:
+  - status
+  dir: ${_GITHUB_REPO}
+
+- id: Execute Clean and Unit Tests
+  name: 'gcr.io/$PROJECT_ID/scala-sbt'
+  entrypoint: /bin/bash
+  args:
+    - '-c'
+    - |
+      echo "${_NEXUS_IP}    maven.skytv.it" >> /etc/hosts
+      cat /etc/hosts
+      env
+      /usr/bin/sbt clean connectorsDb/test
+  dir: '${_GITHUB_REPO}'
+  env:
+    - 'GOOGLE_APPLICATION_CREDENTIALS=/workspace/${_ENC_FILE}'
+    - 'build.publish.user=deployer'                 # waiting for solving the KMS Client issue
+    - 'build.publish.password=4GZ9l0fhLg1AW7l'      # waiting for solving the KMS Client issue
+
+- id: Push oracle-connector image in GCR
+  name: 'gcr.io/$PROJECT_ID/scala-sbt'
+  args: ['connectorsDb/docker:publish']
+  dir: '${_GITHUB_REPO}'
+  env:
+    - 'GOOGLE_APPLICATION_CREDENTIALS=/workspace/${_ENC_FILE}'
+    - 'build.publish.user=deployer'                 # waiting for solving the KMS Client issue
+    - 'build.publish.password=4GZ9l0fhLg1AW7l'      # waiting for solving the KMS Client issue
+
+- id: Change image name into K8S manifest
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: /bin/bash
+  args:
+  - '-c'
+  - |
+    sed -i "s/CONTAINER_IMAGE_1/gcr.io\/$PROJECT_ID\/${_CONTAINER_IMAGE}:${_CONTAINER_IMAGE_VERSION}/" tools/${_APP_NAME}/k8s/${_APP_NAME}.yaml
+    sed -i "s/PROJECT_ID/$PROJECT_ID/g" tools/${_APP_NAME}/k8s/${_APP_NAME}.yaml
+    cat tools/${_APP_NAME}/k8s/${_APP_NAME}.yaml
+  dir: '${_GITHUB_REPO}'
+
+
+- id: Create namespace 
+  name: 'gcr.io/cloud-builders/kubectl'
+  entrypoint: /bin/bash
+  args:
+  - '-c'
+  - |
+    kubectl create namespace oracle-connector --dry-run -o yaml | grep -v "spec: {}" | grep -v "status: {}" | grep -v "creationTimestamp: null" | tee temp.yaml
+    echo "---" >> temp.yaml
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}'
+  timeout: 60s
+  dir: '${_GITHUB_REPO}'
+
+- id: Create secret with Service Account
+  name: 'gcr.io/cloud-builders/kubectl'
+  entrypoint: /bin/bash
+  args:
+  - '-c'
+  - |
+    kubectl create secret generic oracle-connector-credentials --namespace oracle-connector --from-file=credentials.json=/workspace/${_ENC_FILE} --dry-run -o yaml | grep -v "creationTimestamp: null" >> temp.yaml
+    echo "---" >> temp.yaml
+    cat tools/${_APP_NAME}/k8s/${_APP_NAME}.yaml >> temp.yaml
+    cat temp.yaml | tee tools/${_APP_NAME}/k8s/${_APP_NAME}.yaml
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}'
+  timeout: 60s
+  dir: '${_GITHUB_REPO}'
+
+- id: Run oracle-connector container in K8S
+  name: 'gcr.io/cloud-builders/kubectl'
+  args: ['apply', '-f', 'tools/${_APP_NAME}/k8s/${_APP_NAME}.yaml']
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}'
+  timeout: 60s
+  dir: '${_GITHUB_REPO}'
