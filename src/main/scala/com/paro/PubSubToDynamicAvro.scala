@@ -3,14 +3,13 @@ package com.paro
 import java.time.{LocalDateTime, ZoneId}
 
 import com.spotify.scio.ContextAndArgs
-import com.spotify.scio.parquet.avro._
 import org.apache.beam.sdk.io._
 import org.apache.beam.sdk.transforms.windowing.{FixedWindows, Window}
 import org.joda.time.Duration
 
 import scala.util.Random
 
-object PubSubToAvro {
+object PubSubToDynamicAvro {
 
   /**
     * Run with:
@@ -40,7 +39,16 @@ object PubSubToAvro {
         println("before saving")
         x
       })
-      .saveAsParquetAvroFile("avro-parquet-test.parquet")
+      .saveAsCustomOutput(
+        "Custom avro IO",
+        AvroIO
+          .writeCustomTypeToGenericRecords[TestType]()
+          .withNumShards(1)
+          .withWindowedWrites()
+          .withTempDirectory(FileSystems.matchNewResource(
+            "gs://sky-ita-data-analytics-dev/dataflow/temp/multiavro/", true))
+          .to(new TestRandomTypeDynamicAvroDestinations("gs://sky-ita-data-analytics-dev/dataflow/numbers-"))
+      )
 
     sc.close().waitUntilFinish()
   }
