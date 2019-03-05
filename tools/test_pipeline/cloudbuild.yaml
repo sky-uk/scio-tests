@@ -1,13 +1,13 @@
 substitutions:
-    _CLOUDSDK_COMPUTE_ZONE: europe-west1-b                   # comment for devtest env / uncomment for poc env
-    _CLOUDSDK_CONTAINER_CLUSTER: sky-dapbb-dev               # comment for devtest env / uncomment for poc env
+#    _CLOUDSDK_COMPUTE_ZONE: europe-west1-b                   # comment for devtest env / uncomment for poc env
+#    _CLOUDSDK_CONTAINER_CLUSTER: sky-dapbb-dev               # comment for devtest env / uncomment for poc env
     _BUCKET_NAME: test-kms                                   # comment for devtest env / uncomment for poc env
     _KEYRING: sky-dap-bb-key-ring                            # comment for devtest env / uncomment for poc env
     _KEY: sky-dap-bb-key
     _SSH_KEY: scio_test_rsa                                    
-    _APP_NAME: test_sbt
-    _CONTAINER_IMAGE: test_sbt
-    _CONTAINER_IMAGE_VERSION: latest
+#    _APP_NAME: test_sbt
+#    _CONTAINER_IMAGE: test_sbt
+#    _CONTAINER_IMAGE_VERSION: latest
     _ENC_FILE: default-account.json
     _NEXUS_IP: 35.242.211.70
     _GITHUB_REPO: scio-tests #This line is required while Jenkins is not configured
