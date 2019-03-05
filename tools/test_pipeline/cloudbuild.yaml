@@ -1,18 +1,13 @@
 substitutions:
-    _CLOUDSDK_COMPUTE_ZONE: europe-west1-b                                  # comment for poc env / uncomment for devtest env
-    _CLOUDSDK_CONTAINER_CLUSTER: sky-dap-bb-ingestion                       # comment for poc env / uncomment for devtest env
-    _BUCKET_NAME: skyita-da-daita-devops/ServiceAccount/db_connector        # comment for poc env / uncomment for devtest env
-    _KEYRING: skyita-da-daita-keyring                                       # comment for poc env / uncomment for devtest env
-    _KEY: skyita-da-daita-key                                               # comment for poc env / uncomment for devtest env
-    #_CLOUDSDK_COMPUTE_ZONE: europe-west1-b                   # comment for devtest env / uncomment for poc env
-    #_CLOUDSDK_CONTAINER_CLUSTER: sky-dapbb-dev               # comment for devtest env / uncomment for poc env
-    #_BUCKET_NAME: test-kms                                   # comment for devtest env / uncomment for poc env
-    #_KEYRING: sky-dap-bb-key-ring                            # comment for devtest env / uncomment for poc env
-    #_KEY: sky-dap-bb-key                                     # comment for devtest env / uncomment for poc env
-    _APP_NAME: oracle_connector
-    _CONTAINER_IMAGE: skytv-connectors-db
+    _CLOUDSDK_COMPUTE_ZONE: europe-west1-b                   # comment for devtest env / uncomment for poc env
+    _CLOUDSDK_CONTAINER_CLUSTER: sky-dapbb-dev               # comment for devtest env / uncomment for poc env
+    _BUCKET_NAME: test-kms                                   # comment for devtest env / uncomment for poc env
+    _KEYRING: sky-dap-bb-key-ring                            # comment for devtest env / uncomment for poc env
+    _KEY: sky-dap-bb-key                                     # comment for devtest env / uncomment for poc env
+    _APP_NAME: test_sbt
+    _CONTAINER_IMAGE: test_sbt
     _CONTAINER_IMAGE_VERSION: latest
-    _ENC_FILE: oracle-connector.json
+    _ENC_FILE: default-account.json
     _NEXUS_IP: 35.242.211.70
     _GITHUB_REPO: ita-data-analytics #This line is required while Jenkins is not configured
 
