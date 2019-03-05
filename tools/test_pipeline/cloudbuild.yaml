@@ -131,7 +131,7 @@ steps:
     echo "${_NEXUS_IP}    maven.skytv.it" >> /etc/hosts
     cat /etc/hosts
     if [ "${_BRANCH_NAME}" == "master" ]; then
-    sbt release with-defaults
+    sbt "release with-defaults"
     else
     sbt test
     fi
