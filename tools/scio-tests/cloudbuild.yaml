@@ -6,7 +6,7 @@ substitutions:
     _KEY: sky-dap-bb-key
     _SSH_KEY: scio_test_rsa                                    
 #    _APP_NAME: test_sbt
-#    _CONTAINER_IMAGE: test_sbt
+    _CONTAINER_IMAGE: scio-tests
 #    _CONTAINER_IMAGE_VERSION: latest
     _ENC_FILE: default-account.json
     _NEXUS_IP: 35.242.211.70
@@ -139,31 +139,13 @@ steps:
   volumes:
   - name: 'ssh'
     path: /root/.ssh
-    
-#- id: Execute Clean and Unit Tests
-#  name: 'gcr.io/$PROJECT_ID/scala-sbt'
-#  entrypoint: /bin/bash
-#  args:
-#    - '-c'
-#    - |
-#      echo "${_NEXUS_IP}    maven.skytv.it" >> /etc/hosts
-#      cat /etc/hosts
-#      env
-#      /usr/bin/sbt clean connectorsDb/test
-#  dir: '${_GITHUB_REPO}'
-#  env:
-#    - 'GOOGLE_APPLICATION_CREDENTIALS=/workspace/${_ENC_FILE}'
-#    - 'build.publish.user=deployer'                 # waiting for solving the KMS Client issue
-#    - 'build.publish.password=4GZ9l0fhLg1AW7l'      # waiting for solving the KMS Client issue
 
-#- id: Push oracle-connector image in GCR
-#  name: 'gcr.io/$PROJECT_ID/scala-sbt'
-#  args: ['connectorsDb/docker:publish']
-#  dir: '${_GITHUB_REPO}'
-#  env:
-#    - 'GOOGLE_APPLICATION_CREDENTIALS=/workspace/${_ENC_FILE}'
-#    - 'build.publish.user=deployer'                 # waiting for solving the KMS Client issue
-#    - 'build.publish.password=4GZ9l0fhLg1AW7l'      # waiting for solving the KMS Client issue
+- id: Build & push scio-tests image in GCR
+  name: 'gcr.io/$PROJECT_ID/scala-sbt'
+  args: ['scio-tests/docker:publish']
+  dir: '${_GITHUB_REPO}'
+  env:
+  - 'GOOGLE_APPLICATION_CREDENTIALS=/workspace/${_ENC_FILE}'
 
 #- id: Change image name into K8S manifest
 #  name: 'gcr.io/cloud-builders/docker'
@@ -171,11 +153,11 @@ steps:
 #  args:
 #  - '-c'
 #  - |
-#    sed -i "s/CONTAINER_IMAGE_1/gcr.io\/$PROJECT_ID\/${_CONTAINER_IMAGE}:${_CONTAINER_IMAGE_VERSION}/" tools/${_APP_NAME}/k8s/${_APP_NAME}.yaml
+#    curr_ver=`gcloud container images list-tags gcr.io/$PROJECT_ID/${_CONTAINER_IMAGE} | head -n2 | tail -n1 | awk '{print $2}' | cut -d , -f1`
+#    sed -i "s/CONTAINER_IMAGE_1/gcr.io\/$PROJECT_ID\/${_CONTAINER_IMAGE}:$curr_ver/" tools/${_APP_NAME}/k8s/${_APP_NAME}.yaml
 #    sed -i "s/PROJECT_ID/$PROJECT_ID/g" tools/${_APP_NAME}/k8s/${_APP_NAME}.yaml
 #    cat tools/${_APP_NAME}/k8s/${_APP_NAME}.yaml
 #  dir: '${_GITHUB_REPO}'
-
 
 #- id: Create namespace 
 #  name: 'gcr.io/cloud-builders/kubectl'
