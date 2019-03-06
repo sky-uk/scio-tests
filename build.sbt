@@ -10,6 +10,7 @@ val scalaMacrosVersion = "2.1.1"
 publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
 
 dockerBaseImage := "gcr.io/sky-italia-bigdata/oracle-jdk:jdk-1.8"
+dockerRepository := Some("gcr.io/sky-italia-bigdata")
 
 lazy val root: Project = project
   .in(file("."))
@@ -50,18 +51,18 @@ lazy val runIntegrationTest: ReleaseStep = ReleaseStep(
 
 lazy val myTests: Command = Command.command("runMyITTests")(runITAction)
 
-lazy val dockerPublishLocalAction = { st: State =>
+lazy val dockerPublishAction = { st: State =>
   val extracted = Project.extract(st)
   val ref = extracted.get(thisProjectRef)
-  extracted.runAggregated(publishLocal in Docker in ref, st)
+  extracted.runAggregated(publish in Docker in ref, st)
 }
 
-lazy val dockerPublishLocal: ReleaseStep = ReleaseStep(
-  action = dockerPublishLocalAction,
+lazy val dockerPublish: ReleaseStep = ReleaseStep(
+  action = dockerPublishAction,
   enableCrossBuild = true
 )
 
-lazy val myDocker: Command = Command.command("myDockerPublish")(dockerPublishLocalAction)
+lazy val myDocker: Command = Command.command("myDockerPublish")(dockerPublishAction)
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
@@ -73,7 +74,7 @@ releaseProcess := Seq[ReleaseStep](
   commitReleaseVersion,
   tagRelease,
   publishArtifacts,
-  dockerPublishLocal,
+  dockerPublish,
   setNextVersion,
   commitNextVersion,
   pushChanges
