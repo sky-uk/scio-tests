@@ -9,11 +9,13 @@ dockerBaseImage := "gcr.io/sky-italia-bigdata/oracle-jdk:jdk-1.8"
 
 lazy val root: Project = project
   .in(file("."))
+  .configs(IntegrationTest)
   .enablePlugins(JavaAppPackaging)
   .settings(
     name := "scio-tests",
     description := "scio-tests",
     publish / skip := true,
+    Defaults.itSettings,
     libraryDependencies ++= Seq(
       "com.sksamuel.avro4s" %% "avro4s-core" % "2.0.1",
       "com.spotify" %% "scio-core" % scioVersion,
@@ -24,7 +26,6 @@ lazy val root: Project = project
       // optional dataflow runner
       "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
       "org.slf4j" % "slf4j-simple" % "1.7.25",
-      "org.scalatest" %% "scalatest" % "3.0.6" % Test
-
+      "org.scalatest" %% "scalatest" % "3.0.6" % "it,test"
     )
   )
