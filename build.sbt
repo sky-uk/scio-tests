@@ -33,7 +33,7 @@ lazy val root: Project = project
   )
 
 releaseProcess := Seq[ReleaseStep](
-  checkSnapshotDependencies,
+  //checkSnapshotDependencies,
   inquireVersions,
   runClean,
   runTest,
