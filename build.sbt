@@ -50,16 +50,24 @@ lazy val runIntegrationTest: ReleaseStep = ReleaseStep(
 
 lazy val command: Command = Command.command("runMyITTests")(runITAction)
 
+lazy val dockerPublishLocal: ReleaseStep = ReleaseStep(
+  action = runITAction,
+  enableCrossBuild = true
+)
+
+
+
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
   runClean,
-  runIntegrationTest,
   runTest,
+  runIntegrationTest,
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
   publishArtifacts,
+  dockerPublishLocal,
   setNextVersion,
   commitNextVersion,
   pushChanges
