@@ -32,7 +32,7 @@ lazy val root: Project = project
       "org.slf4j" % "slf4j-simple" % "1.7.25",
       "org.scalatest" %% "scalatest" % "3.0.6" % "it,test"
     ),
-    commands ++= Seq(command)
+    commands ++= Seq(myTests, myDocker)
   )
 
 lazy val runITAction = { st: State =>
@@ -48,14 +48,20 @@ lazy val runIntegrationTest: ReleaseStep = ReleaseStep(
   enableCrossBuild = true
 )
 
-lazy val command: Command = Command.command("runMyITTests")(runITAction)
+lazy val myTests: Command = Command.command("runMyITTests")(runITAction)
+
+lazy val dockerPublishLocalAction = { st: State =>
+  val extracted = Project.extract(st)
+  val ref = extracted.get(thisProjectRef)
+  extracted.runAggregated(publishLocal in Docker in ref, st)
+}
 
 lazy val dockerPublishLocal: ReleaseStep = ReleaseStep(
-  action = runITAction,
+  action = dockerPublishLocalAction,
   enableCrossBuild = true
 )
 
-
+lazy val myDocker: Command = Command.command("myDockerPublish")(dockerPublishLocalAction)
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
