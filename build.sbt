@@ -1,5 +1,5 @@
-//import sbt._
-//import sbt.Keys._
+import sbt._
+import sbt.Keys._
 import ReleaseKeys._
 import ReleaseTransformations._
 
@@ -10,7 +10,15 @@ val scalaMacrosVersion = "2.1.1"
 publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
 
 dockerBaseImage := "gcr.io/sky-italia-bigdata/oracle-jdk:jdk-1.8"
-dockerRepository := Some("gcr.io/sky-italia-bigdata")
+dockerRepository := Some("gcr.io")
+dockerUsername := Some("sky-italia-bigdata")
+packageName in Docker := "test-project"
+
+dockerAliases ++= Seq(
+  dockerAlias.value.withTag(Option(
+    s"${version.value}-${git.gitCurrentBranch.value}"
+  ))
+)
 
 lazy val root: Project = project
   .in(file("."))
