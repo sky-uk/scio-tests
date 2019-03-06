@@ -1,4 +1,6 @@
 
+import ReleaseTransformations._
+
 val scioVersion = "0.7.0"
 val beamVersion = "2.9.0"
 val scalaMacrosVersion = "2.1.1"
@@ -29,3 +31,17 @@ lazy val root: Project = project
       "org.scalatest" %% "scalatest" % "3.0.6" % "it,test"
     )
   )
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  publishArtifacts,
+  setNextVersion,
+  commitNextVersion,
+  pushChanges
+)
