@@ -1,4 +1,6 @@
-
+//import sbt._
+//import sbt.Keys._
+import ReleaseKeys._
 import ReleaseTransformations._
 
 val scioVersion = "0.7.0"
@@ -28,17 +30,32 @@ lazy val root: Project = project
       // optional dataflow runner
       "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
       "org.slf4j" % "slf4j-simple" % "1.7.25",
-      "org.scalatest" %% "scalatest" % "3.0.6" % "it,test",
-      // snapshot dependencies
-      "org.julienrf" %% "endpoints-algebra" % "0.7.1-SNAPSHOT"
-    )
+      "org.scalatest" %% "scalatest" % "3.0.6" % "it,test"
+    ),
+    commands ++= Seq(command)
   )
 
+lazy val runITAction = { st: State =>
+    if (!st.get(skipTests).getOrElse(false)) {
+      val extracted = Project.extract(st)
+      val ref = extracted.get(thisProjectRef)
+      extracted.runAggregated(test in IntegrationTest in ref, st)
+    } else st
+  }
+
+lazy val runIntegrationTest: ReleaseStep = ReleaseStep(
+  action = runITAction,
+  enableCrossBuild = true
+)
+
+lazy val command: Command = Command.command("runMyITTests")(runITAction)
+
 releaseProcess := Seq[ReleaseStep](
-  //checkSnapshotDependencies,
+  checkSnapshotDependencies,
   inquireVersions,
   runClean,
   runTest,
+  runIntegrationTest,
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
