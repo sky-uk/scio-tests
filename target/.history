@@ -34,3 +34,27 @@ reload
 compile
 reload
 compile
+docker:publishLocal
+show dockerCommands
+reload
+docker:publishLocal
+reload
+docker:publishLocal
+reload
+docker:publishLocal
+show dockerCommands
+reload
+docker:publishLocal
+reload
+docker:publishLocal
+reload
+docker:publishLocal
+clean
+docker:publishLocal
+reload
+docker:publishLocal
+clean
+reload
+docker:publishLocal
+clean
+test

@@ -1,33 +1,15 @@
-import sbt.Keys._
-import sbt._
 
 val scioVersion = "0.7.0"
 val beamVersion = "2.9.0"
 val scalaMacrosVersion = "2.1.1"
 
-publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
+//publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
 
-lazy val commonSettings = Defaults.coreDefaultSettings ++ Seq(
-  organization := "com.paro",
-  // Semantic versioning http://semver.org/
-  scalacOptions ++= Seq("-target:jvm-1.8",
-    "-deprecation",
-    "-feature",
-    "-unchecked"),
-  javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
-)
-
-lazy val paradiseDependency =
-  "org.scalamacros" % "paradise" % scalaMacrosVersion cross CrossVersion.full
-lazy val macroSettings = Seq(
-  libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-  addCompilerPlugin(paradiseDependency)
-)
+dockerBaseImage := "gcr.io/sky-italia-bigdata/oracle-jdk:jdk-1.8"
 
 lazy val root: Project = project
   .in(file("."))
-  .settings(commonSettings)
-  .settings(macroSettings)
+  .enablePlugins(JavaAppPackaging)
   .settings(
     name := "scio-tests",
     description := "scio-tests",
@@ -46,19 +28,3 @@ lazy val root: Project = project
 
     )
   )
-  .enablePlugins(PackPlugin)
-
-lazy val repl: Project = project
-  .in(file(".repl"))
-  .settings(commonSettings)
-  .settings(macroSettings)
-  .settings(
-    name := "repl",
-    description := "Scio REPL for scio-tests",
-    libraryDependencies ++= Seq(
-      "com.spotify" %% "scio-repl" % scioVersion
-    ),
-    Compile / mainClass := Some("com.spotify.scio.repl.ScioShell"),
-    publish / skip := true
-  )
-  .dependsOn(root)
