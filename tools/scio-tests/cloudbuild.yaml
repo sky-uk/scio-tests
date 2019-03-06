@@ -6,7 +6,7 @@ substitutions:
     _KEY: sky-dap-bb-key
     _SSH_KEY: scio_test_rsa                                    
 #    _APP_NAME: test_sbt
-    _CONTAINER_IMAGE: scio-tests
+#    _CONTAINER_IMAGE: scio-tests
 #    _CONTAINER_IMAGE_VERSION: latest
     _ENC_FILE: default-account.json
     _NEXUS_IP: 35.242.211.70
@@ -142,7 +142,7 @@ steps:
 
 - id: Build & push scio-tests image in GCR
   name: 'gcr.io/$PROJECT_ID/scala-sbt'
-  args: ['scio-tests/docker:publish']
+  args: ['docker:publish']
   dir: '${_GITHUB_REPO}'
   env:
   - 'GOOGLE_APPLICATION_CREDENTIALS=/workspace/${_ENC_FILE}'
