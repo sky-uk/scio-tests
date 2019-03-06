@@ -19,7 +19,7 @@ lazy val root: Project = project
     publish / skip := true,
     Defaults.itSettings,
     libraryDependencies ++= Seq(
-      "com.sksamuel.avro4s" %% "avro4s-core" % "2.0.1-SNAPSHOT",
+      "com.sksamuel.avro4s" %% "avro4s-core" % "2.0.1",
       "com.spotify" %% "scio-core" % scioVersion,
       "com.spotify" %% "scio-avro" % scioVersion,
       "com.spotify" %% "scio-parquet" % scioVersion,
@@ -28,7 +28,9 @@ lazy val root: Project = project
       // optional dataflow runner
       "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
       "org.slf4j" % "slf4j-simple" % "1.7.25",
-      "org.scalatest" %% "scalatest" % "3.0.6" % "it,test"
+      "org.scalatest" %% "scalatest" % "3.0.6" % "it,test",
+      // snapshot dependencies
+      "org.julienrf" %% "endpoints-algebra" % "0.7.1-SNAPSHOT"
     )
   )
 
