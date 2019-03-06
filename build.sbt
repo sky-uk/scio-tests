@@ -17,7 +17,7 @@ lazy val root: Project = project
     publish / skip := true,
     Defaults.itSettings,
     libraryDependencies ++= Seq(
-      "com.sksamuel.avro4s" %% "avro4s-core" % "2.0.1",
+      "com.sksamuel.avro4s" %% "avro4s-core" % "2.0.1-SNAPSHOT",
       "com.spotify" %% "scio-core" % scioVersion,
       "com.spotify" %% "scio-avro" % scioVersion,
       "com.spotify" %% "scio-parquet" % scioVersion,
