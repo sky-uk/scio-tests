@@ -36,7 +36,7 @@ lazy val root: Project = project
   .settings(
     name := "scio-tests",
     description := "scio-tests",
-    publish / skip := true,
+    //publish / skip := true,
     Defaults.itSettings,
     libraryDependencies ++= Seq(
       "com.sksamuel.avro4s" %% "avro4s-core" % "2.0.1",
