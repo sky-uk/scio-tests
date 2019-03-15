@@ -7,7 +7,16 @@ val scioVersion = "0.7.0"
 val beamVersion = "2.9.0"
 val scalaMacrosVersion = "2.1.1"
 
-publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
+//publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
+publishTo := {
+      val nexus = "http://maven.skytv.it/"
+      if (isSnapshot.value)
+        Some("snapshots" at nexus + "repository/maven-snapshots")
+      else
+        Some("releases" at nexus + "repository/maven-releases")
+    }
+
+credentials += Credentials("Sonatype Nexus Repository Manager", "maven.skytv.it", "admin", "admin123")
 
 dockerBaseImage := "gcr.io/sky-italia-bigdata/oracle-jdk:jdk-1.8"
 dockerRepository := Some("gcr.io")
