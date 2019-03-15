@@ -96,5 +96,6 @@ releaseProcess := Seq[ReleaseStep](
   dockerPublish,
   setNextVersion,
   commitNextVersion,
-  pushChanges
+  pushChanges,
+  publishArtifacts
 )
