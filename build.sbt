@@ -92,7 +92,7 @@ releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  publishArtifacts,
+  //publishArtifacts,
   dockerPublish,
   setNextVersion,
   commitNextVersion,
