@@ -18,7 +18,7 @@ publishTo := {
 
 credentials += Credentials("Sonatype Nexus Repository Manager", "maven.skytv.it", "admin", "admin123")
 
-updateOptions := updateOptions.value.withGigahorse(false)
+//updateOptions := updateOptions.value.withGigahorse(false)
 
 dockerBaseImage := "gcr.io/sky-italia-bigdata/oracle-jdk:jdk-1.8"
 dockerRepository := Some("gcr.io")
@@ -28,6 +28,12 @@ packageName in Docker := "test-project"
 dockerAliases ++= Seq(
   dockerAlias.value.withTag(Option(
     s"${version.value}-${git.gitCurrentBranch.value}"
+  )),
+  dockerAlias.value.withTag(Option(
+    "tag1"
+  )),
+  dockerAlias.value.withTag(Option(
+    "tag2"
   ))
 )
 
@@ -97,6 +103,6 @@ releaseProcess := Seq[ReleaseStep](
   setNextVersion,
   commitNextVersion,
   pushChanges,
-  publishArtifacts,
-  dockerPublish
+  publishArtifacts
 )
+
