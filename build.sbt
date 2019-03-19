@@ -18,7 +18,7 @@ publishTo := {
 
 credentials += Credentials("Sonatype Nexus Repository Manager", "maven.skytv.it", "admin", "admin123")
 
-//updateOptions := updateOptions.value.withGigahorse(false)
+updateOptions := updateOptions.value.withGigahorse(false)
 
 dockerBaseImage := "gcr.io/sky-italia-bigdata/oracle-jdk:jdk-1.8"
 dockerRepository := Some("gcr.io")
