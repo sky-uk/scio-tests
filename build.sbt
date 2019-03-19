@@ -20,27 +20,12 @@ credentials += Credentials("Sonatype Nexus Repository Manager", "maven.skytv.it"
 
 updateOptions := updateOptions.value.withGigahorse(false)
 
-dockerBaseImage := "gcr.io/sky-italia-bigdata/oracle-jdk:jdk-1.8"
-dockerRepository := Some("gcr.io")
-dockerUsername := Some("sky-italia-bigdata")
-packageName in Docker := "test-project"
 
-dockerAliases ++= Seq(
-  dockerAlias.value.withTag(Option(
-    s"${version.value}-${git.gitCurrentBranch.value}"
-  )),
-  dockerAlias.value.withTag(Option(
-    "tag1"
-  )),
-  dockerAlias.value.withTag(Option(
-    "tag2"
-  ))
-)
 
 lazy val root: Project = project
   .in(file("."))
   .configs(IntegrationTest)
-  .enablePlugins(JavaAppPackaging)
+  //.enablePlugins(JavaAppPackaging)
   .settings(
     name := "scio-tests",
     description := "scio-tests",
@@ -59,6 +44,36 @@ lazy val root: Project = project
       "org.scalatest" %% "scalatest" % "3.0.6" % "it,test"
     ),
     commands ++= Seq(myTests, myDocker)
+  )
+  .aggregate(subModule)
+
+lazy val subModule: Project = project
+  .in(file("sub-module"))
+  .enablePlugins(JavaAppPackaging)
+  .settings(
+    name := "scio-tests-sub-module",
+    description := "scio-tests-sub-module",
+    //publish / skip := true,
+    libraryDependencies ++= Seq(
+      "org.slf4j" % "slf4j-simple" % "1.7.25",
+      "org.scalatest" %% "scalatest" % "3.0.6" % "test"
+    ),
+    dockerBaseImage := "gcr.io/sky-italia-bigdata/oracle-jdk:jdk-1.8",
+    dockerRepository := Some("gcr.io"),
+    dockerUsername := Some("sky-italia-bigdata"),
+    packageName in Docker := "test-project",
+
+    /*dockerAliases ++= Seq(
+      dockerAlias.value.withTag(Option(
+        s"${version.value}-${git.gitCurrentBranch.value}"
+      )),
+      dockerAlias.value.withTag(Option(
+        "tag1"
+      )),
+      dockerAlias.value.withTag(Option(
+        "tag2"
+      ))
+    ) */
   )
 
 lazy val runITAction = { st: State =>
